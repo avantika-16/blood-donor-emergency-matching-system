@@ -56,4 +56,3 @@ blood-donor-emergency-matching-system/
     ├── blood_request.html
     ├── matches.html
     └── donor_notifications.html
-
