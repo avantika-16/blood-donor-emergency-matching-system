@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Donor Notifications | BloodMatch</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        /* Navbar */
+        nav {
+            background: #b91c1c;
+            color: white;
+            padding: 18px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 15px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main */
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .heading {
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #666;
+        }
+
+        /* Notification Card */
+        .notification-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #b91c1c;
+        }
+
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .blood-group {
+            font-size: 25px;
+            font-weight: bold;
+            color: #b91c1c;
+        }
+
+        .urgency {
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .message {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .detail {
+            background: #f8fafc;
+            padding: 13px;
+            border-radius: 8px;
+        }
+
+        .detail strong {
+            display: block;
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .detail span {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .actions {
+            display: flex;
+            gap: 12px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .actions form {
+            margin: 0;
+        }
+
+        button {
+            border: none;
+            padding: 11px 24px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .accept {
+            background: #16a34a;
+            color: white;
+        }
+
+        .accept:hover {
+            background: #15803d;
+        }
+
+        .decline {
+            background: #dc2626;
+            color: white;
+        }
+
+        .decline:hover {
+            background: #b91c1c;
+        }
+
+        .status {
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 7px;
+            display: inline-block;
+        }
+
+        .accepted {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .declined {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Empty State */
+        .empty {
+            background: white;
+            padding: 50px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .empty h2 {
+            margin-bottom: 10px;
+        }
+
+        .empty p {
+            color: #777;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            background: #111827;
+            color: #aaa;
+            text-align: center;
+            padding: 25px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+
+            nav {
+                padding: 15px 5%;
+            }
+
+            nav a {
+                margin-left: 10px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .top-row {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<nav>
+
+    <div class="logo">
+        🩸 BloodMatch
+    </div>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/donor/register">Become a Donor</a>
+    </div>
+
+</nav>
+
+
+<!-- ================= MAIN CONTENT ================= -->
+
+<div class="container">
+
+    <div class="heading">
+
+        <h1>Donor Notifications</h1>
+
+        <p>
+            View urgent blood requests and respond to donor matches.
+        </p>
+
+    </div>
+
+
+    {% if notifications %}
+
+        {% for notification in notifications %}
+
+        <div class="notification-card">
+
+            <!-- Top -->
+            <div class="top-row">
+
+                <div class="blood-group">
+                    🩸 {{ notification.BloodGroup }}
+                </div>
+
+                <div class="urgency">
+                    {{ notification.Urgency }}
+                </div>
+
+            </div>
+
+
+            <!-- Message -->
+            <div class="message">
+
+                {{ notification.Message }}
+
+            </div>
+
+
+            <!-- Request Details -->
+            <div class="details">
+
+                <div class="detail">
+                    <strong>Units Required</strong>
+                    <span>
+                        {{ notification.UnitsRequired }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <strong>Required Date</strong>
+                    <span>
+                        {{ notification.RequiredDate }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <strong>Request ID</strong>
+                    <span>
+                        #{{ notification.RequestID }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <strong>Notification Type</strong>
+                    <span>
+                        {{ notification.NotificationType }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <strong>Match ID</strong>
+                    <span>
+                        #{{ notification.MatchID }}
+                    </span>
+                </div>
+
+                <div class="detail">
+                    <strong>Delivery Status</strong>
+                    <span>
+                        {{ notification.DeliveryStatus }}
+                    </span>
+                </div>
+
+            </div>
+
+
+            <!-- ================= RESPONSE BUTTONS ================= -->
+
+            {% set current_status = namespace(value='Matched') %}
+
+            <!-- We get the status from the matching record -->
+
+            {% if notification.MatchStatus == "Accepted" %}
+
+                <div class="status accepted">
+                    ✓ You Accepted This Request
+                </div>
+
+            {% elif notification.MatchStatus == "Declined" %}
+
+                <div class="status declined">
+                    ✕ You Declined This Request
+                </div>
+
+            {% else %}
+
+                <div class="actions">
+
+                    <form
+                        action="/match/{{ notification.MatchID }}/response"
+                        method="POST"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="response"
+                            value="Accepted"
+                        >
+
+                        <button
+                            type="submit"
+                            class="accept"
+                        >
+                            ✓ Accept Request
+                        </button>
+
+                    </form>
+
+
+                    <form
+                        action="/match/{{ notification.MatchID }}/response"
+                        method="POST"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="response"
+                            value="Declined"
+                        >
+
+                        <button
+                            type="submit"
+                            class="decline"
+                        >
+                            ✕ Decline Request
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+
+            <h2>🔔 No Notifications</h2>
+
+            <p>
+                You currently don't have any blood donation requests.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    BloodMatch © 2026 |
+    Connecting blood donors with people in need.
+
+</footer>
+
+</body>
+</html>

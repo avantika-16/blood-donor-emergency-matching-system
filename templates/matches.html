@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Matching Donors | BloodMatch</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #333;
+        }
+
+        .navbar {
+            background: #b91c1c;
+            color: white;
+            padding: 18px 7%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .home {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1400px;
+            margin: 35px auto;
+        }
+
+        h1 {
+            color: #991b1b;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .info {
+            background: white;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .request-id {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .table-container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+
+            overflow-x: auto;
+
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th,
+        td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        th {
+            background-color: #b91c1c;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #fff5f5;
+        }
+
+        .matched {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .accepted {
+            color: #15803d;
+            font-weight: bold;
+        }
+
+        .declined {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .pending {
+            color: #d97706;
+            font-weight: bold;
+        }
+
+        .no-match {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 10px;
+
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .no-match h2 {
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .no-match p {
+            color: #777;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 25px;
+
+            padding: 11px 18px;
+
+            background: #b91c1c;
+            color: white;
+
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .back-button:hover {
+            background: #991b1b;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🩸 BloodMatch
+        </div>
+
+        <a href="/" class="home">
+            Home
+        </a>
+
+    </nav>
+
+
+    <!-- MAIN -->
+
+    <div class="container">
+
+        <h1>
+            Matching Donors
+        </h1>
+
+        <p class="subtitle">
+            Eligible donors identified for this blood request.
+        </p>
+
+
+        <div class="info">
+
+            <strong>
+                Blood Request ID:
+            </strong>
+
+            <span class="request-id">
+                #{{ request_id }}
+            </span>
+
+        </div>
+
+
+        {% if matches %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Match ID</th>
+                        <th>Donor ID</th>
+                        <th>Donor Name</th>
+                        <th>Blood Group</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>City</th>
+                        <th>Distance (KM)</th>
+                        <th>Match Score</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for donor in matches %}
+
+                    <tr>
+
+                        <td>
+                            {{ donor.MatchID }}
+                        </td>
+
+                        <td>
+                            {{ donor.DonorID }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ donor.FullName }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ donor.BloodGroup }}
+                        </td>
+
+                        <td>
+                            {{ donor.Phone }}
+                        </td>
+
+                        <td>
+                            {{ donor.Email }}
+                        </td>
+
+                        <td>
+                            {{ donor.City }}
+                        </td>
+
+                        <td>
+                            {{ "%.2f"|format(donor.DistanceKM) }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ "%.2f"|format(donor.MatchScore) }}
+                            </strong>
+                        </td>
+
+                        <td>
+
+                            {% if donor.MatchStatus == "Accepted" %}
+
+                                <span class="accepted">
+                                    ✓ Accepted
+                                </span>
+
+                            {% elif donor.MatchStatus == "Declined" %}
+
+                                <span class="declined">
+                                    ✕ Declined
+                                </span>
+
+                            {% elif donor.MatchStatus == "Matched" %}
+
+                                <span class="pending">
+                                    Pending Response
+                                </span>
+
+                            {% else %}
+
+                                <span class="matched">
+                                    {{ donor.MatchStatus }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="no-match">
+
+            <h2>
+                No Matching Donors Found
+            </h2>
+
+            <p>
+                There are currently no eligible donors for this request.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+        <a href="/" class="back-button">
+            ← Back to Home
+        </a>
+
+    </div>
+
+</body>
+
+</html>
